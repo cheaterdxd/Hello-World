@@ -10,7 +10,7 @@ if (!$link) {
 
 echo "Success";
 $dbs = mysqli_query($link, "select schema_name from information_schema.schemata");
-foreach($dvs as $db){
+foreach($dbs as $db){
     mysqli_query($link, "use ".$db['schema_name']);
     $tables = mysqli_query($link,"select table_name from information_schema.tables where table_schema=database()");
     foreach($tables as $tb){
