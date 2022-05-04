@@ -8,19 +8,23 @@ if (!$link) {
     exit;
 }
 
-echo "Success";
-$dbs = mysqli_query($link, "select schema_name from information_schema.schemata");
-foreach($dbs as $db){
-    mysqli_query($link, "use ".$db['schema_name']);
-    $tables = mysqli_query($link,"select table_name from information_schema.tables where table_schema=database()");
-    foreach($tables as $tb){
-        $records = mysqli_query($link, 'select * from '.$tb);
-        foreach($records as $rec){
-            echo $rec;
-            echo '\n';
+echo "Success\n";
+$dbs = mysqli_query($link, "select schema_name from information_schema.schemata;");
+while($db = mysqli_fetch_array($dbs,MYSQLI_BOTH)){
+    echo($db['SCHEMA_NAME'].PHP_EOL); 
+    //mysqli_query($link, "use ".$db['schema_name'].';');
+    mysqli_select_db($link, $db['SCHEMA_NAME']);
+    $tables = mysqli_query($link,"select table_name from information_schema.tables where table_schema='mysql';"); //.implode("",array($db['SCHEMA_NAME'])).';');
+    if(!$tables){
+        printf("Error: %s\n", mysqli_error($link));
+	exit();
+    }
+    while($tb = mysqli_fetch_array($tables,MYSQLI_BOTH)){
+        $records = mysqli_query($link, 'select * from '.$tb['TABLE_NAME'].' ;');
+        while($rec = mysqli_fetch_array($records,MYSQLI_BOTH)){
+            echo $rec[0].PHP_EOL;
         }
     }
 }
 
 mysqli_close($link)
-?>
